@@ -956,8 +956,8 @@
             // Ini untuk mencegah kanvas mengambil lebar layar HP secara utuh.
             const origStyle = mainElement.getAttribute('style') || '';
             mainElement.style.cssText = `
-                width: 480px !important; 
-                max-width: 480px !important; 
+                width: 550px !important; 
+                max-width: 550px !important; 
                 margin: 0 !important; 
                 padding: 15px !important; 
                 position: absolute !important; 
@@ -975,7 +975,7 @@
                 const pxToMm = 0.264583; 
                 
                 // Lebar PDF dikunci persis 480px dikonversi ke mm
-                const pdfWidth = 480 * pxToMm; 
+                const pdfWidth = 550 * pxToMm; 
                 const pdfHeight = (elementHeightPx * pxToMm) + 10; 
 
                 // Konfigurasi kamera html2canvas: Tangkap persis dari kordinat 0 sampai 480px
@@ -987,7 +987,7 @@
                         scale: 2, 
                         useCORS: true, 
                         backgroundColor: '#0B1121', 
-                        width: 480,       // KUNCI KAMERA: Hanya melihat selebar 480px
+                        width: 550,       // KUNCI KAMERA: Hanya melihat selebar 480px
                         height: elementHeightPx,
                         windowWidth: 480, // Paksa browser bertingkah seolah layarnya 480px
                         x: 0,             // Mulai potong dari X = 0
