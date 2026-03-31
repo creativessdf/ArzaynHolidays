@@ -103,7 +103,7 @@
         
         <!-- ================= DASHBOARD INFOGRAPHIC ================= -->
         <section id="sec-dashboard">
-            <div id="dash-hero" class="bg-slate-800 rounded-3xl shadow-2xl p-8 mb-8 text-center relative overflow-hidden border border-slate-700 bg-cover bg-center transition-all duration-500">
+            <div id="dash-hero" class="bg-slate-800 rounded-3xl shadow-2xl p-8 mb-8 text-center relative overflow-hidden border border-slate-700 bg-cover bg-center transition-all duration-500 pdf-card">
                 <div class="absolute inset-0 bg-[#0B1121]/80 backdrop-blur-[2px] z-0"></div>
                 <button onclick="openEditDashboard()" class="admin-element absolute top-4 right-4 bg-blue-500/20 text-blue-400 hover:bg-blue-500/40 border border-blue-500/30 w-10 h-10 rounded-full transition shadow-lg z-20"><i class="fas fa-pen"></i></button>
 
@@ -151,7 +151,7 @@
                 </div>
             </div>
 
-            <div class="bg-amber-900/20 rounded-2xl p-6 shadow-sm border border-amber-700/50 relative overflow-hidden mb-8 warning-pattern">
+            <div class="bg-amber-900/20 rounded-2xl p-6 shadow-sm border border-amber-700/50 relative overflow-hidden mb-8 warning-pattern pdf-card">
                 <div class="absolute top-0 left-0 w-2 h-full bg-amber-500"></div>
                 <div class="flex items-start gap-4">
                     <div class="bg-amber-500/20 text-amber-400 border border-amber-500/30 w-10 h-10 rounded-full flex items-center justify-center shrink-0">
@@ -164,7 +164,7 @@
                 </div>
             </div>
 
-            <div class="mb-10">
+            <div class="mb-10 pdf-card">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 text-slate-900 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20 text-lg"><i class="fas fa-star"></i></div>
                     <h3 class="text-2xl font-extrabold text-white tracking-tight">Fasilitas All-In</h3>
@@ -175,7 +175,7 @@
 
         <!-- ================= RUNDOWN TIMELINE ================= -->
         <section id="sec-rundown" class="hidden">
-            <div class="bg-slate-800 rounded-3xl shadow-lg p-6 mb-8 border border-slate-700 flex flex-wrap justify-between items-center gap-4">
+            <div class="bg-slate-800 rounded-3xl shadow-lg p-6 mb-8 border border-slate-700 flex flex-wrap justify-between items-center gap-4 pdf-card">
                 <div>
                     <h2 class="text-3xl font-extrabold text-white tracking-tight">Peta Perjalanan</h2>
                     <p class="text-slate-400 text-sm font-medium mt-1">Alur dan jadwal kegiatan tour secara detail.</p>
@@ -196,7 +196,7 @@
 
         <!-- ================= BIAYA ================= -->
         <section id="sec-biaya" class="hidden">
-            <div class="bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-700">
+            <div class="bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-700 pdf-card">
                 <div class="bg-gradient-to-r from-slate-900 to-[#0B1121] border-b border-slate-700 p-8 text-white text-center relative overflow-hidden">
                     <i class="fas fa-file-invoice-dollar absolute -right-10 -bottom-10 text-9xl text-white/5 transform -rotate-12"></i>
                     <span class="bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest backdrop-blur-sm">Estimasi Dana</span>
@@ -242,7 +242,7 @@
 
         <!-- ================= GALERI ================= -->
         <section id="sec-galeri" class="hidden">
-            <div class="bg-slate-800 rounded-3xl shadow-lg p-6 mb-8 border border-slate-700 flex flex-wrap justify-between items-center gap-4">
+            <div class="bg-slate-800 rounded-3xl shadow-lg p-6 mb-8 border border-slate-700 flex flex-wrap justify-between items-center gap-4 pdf-card">
                 <div>
                     <h2 class="text-3xl font-extrabold text-white tracking-tight">Galeri Dokumentasi</h2>
                     <p class="text-slate-400 text-sm font-medium mt-1">Kumpulan memori perjalanan yang mengesankan.</p>
@@ -505,7 +505,7 @@
                 let icon = iconSet[index % iconSet.length];
                 
                 fasGrid.innerHTML += `
-                    <div class="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 border border-slate-700 flex items-start gap-4 hover:bg-slate-700 hover:shadow-lg hover:-translate-y-1 transition duration-300">
+                    <div class="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 border border-slate-700 flex items-start gap-4 hover:bg-slate-700 hover:shadow-lg hover:-translate-y-1 transition duration-300 pdf-card">
                         <div class="bg-slate-900 text-cyan-400 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner border border-slate-700 text-lg">
                             <i class="fas ${icon}"></i>
                         </div>
@@ -526,7 +526,7 @@
             appData.rundown.forEach((item, index) => {
                 if(item.hari !== currentDay) {
                     container.innerHTML += `
-                        <div class="sticky top-20 z-20 flex justify-center md:justify-start md:ml-[calc(50%-4.5rem)] mt-12 mb-8">
+                        <div class="sticky top-20 z-20 flex justify-center md:justify-start md:ml-[calc(50%-4.5rem)] mt-12 mb-8 pdf-card">
                             <div class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-extrabold py-2.5 px-6 rounded-full shadow-lg shadow-cyan-500/20 border border-cyan-400/30 tracking-widest text-sm uppercase">
                                 ${item.hari}
                             </div>
@@ -543,7 +543,7 @@
                         sliderControlsHtml = `
                             <button onclick="moveSlide('${item.id}', -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-slate-900/80 text-white border border-slate-600 rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition shadow pdf-hide"><i class="fas fa-chevron-left text-xs"></i></button>
                             <button onclick="moveSlide('${item.id}', 1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-slate-900/80 text-white border border-slate-600 rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition shadow pdf-hide"><i class="fas fa-chevron-right text-xs"></i></button>
-                            <div class="absolute bottom-3 left-0 right-0 text-center"><span class="bg-[#0B1121]/80 backdrop-blur-sm text-cyan-400 border border-cyan-900/50 text-[10px] font-bold px-3 py-1 rounded-full tracking-widest"><span id="slide-count-${item.id}">1</span> / ${item.images.length}</span></div>
+                            <div class="absolute bottom-3 left-0 right-0 text-center pdf-hide"><span class="bg-[#0B1121]/80 backdrop-blur-sm text-cyan-400 border border-cyan-900/50 text-[10px] font-bold px-3 py-1 rounded-full tracking-widest"><span id="slide-count-${item.id}">1</span> / ${item.images.length}</span></div>
                         `;
                     }
                     imgHtml = `<div class="relative mt-5 slider-container shadow-md rounded-[1rem] overflow-hidden border border-slate-700" id="slider-${item.id}">${imgs}${sliderControlsHtml}</div>`;
@@ -560,11 +560,11 @@
                                   </div>`;
 
                 container.innerHTML += `
-                    <div class="relative flex items-start gap-5 md:gap-8 group">
+                    <div class="relative flex items-start gap-5 md:gap-8 group pdf-card">
                         <div class="absolute -left-3.5 md:left-1/2 md:-ml-4 mt-2 h-9 w-9 rounded-full border-4 border-[#0B1121] bg-cyan-500 shadow-md flex items-center justify-center z-10 transition-transform group-hover:scale-110 group-hover:bg-blue-500">
                             <i class="fas ${dotIcon} text-white text-[10px]"></i>
                         </div>
-                        <div class="ml-6 md:ml-0 md:w-1/2 md:pr-12 ${index % 2 === 0 ? 'md:text-right md:pr-14' : 'md:ml-auto md:pl-14'}">
+                        <div class="ml-6 md:ml-0 md:w-1/2 md:pr-12 ${index % 2 === 0 ? 'md:text-right md:pr-14' : 'md:ml-auto md:pl-14'} w-full">
                             <div class="bg-slate-800/80 backdrop-blur-sm p-6 rounded-[1.5rem] shadow-lg border border-slate-700 hover:shadow-xl transition-all duration-300 relative overflow-hidden group-hover:-translate-y-1 group-hover:border-cyan-500/50">
                                 <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-cyan-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 <span class="inline-block text-[11px] font-extrabold text-cyan-400 bg-cyan-900/30 px-3 py-1 rounded-md tracking-widest mb-2 border border-cyan-800/50">${item.waktu}</span>
@@ -588,7 +588,7 @@
                 total += item.jumlah;
                 let ketHtml = item.ket ? `<div class="text-[11px] text-slate-500 font-medium mt-1 leading-tight">${item.ket}</div>` : '';
                 body.innerHTML += `
-                    <tr class="hover:bg-slate-700/50 transition border-b border-slate-700/50 group">
+                    <tr class="hover:bg-slate-700/50 transition border-b border-slate-700/50 group pdf-card">
                         <td class="p-4 align-top">
                             <div class="flex gap-3">
                                 <span class="bg-slate-900 text-slate-500 font-extrabold text-[10px] w-5 h-5 flex items-center justify-center rounded shrink-0 mt-0.5 group-hover:bg-blue-900/50 group-hover:text-cyan-400 border border-slate-700 transition">${index+1}</span>
@@ -617,7 +617,7 @@
             }
             appData.galeri.forEach((img, index) => {
                 grid.innerHTML += `
-                    <div class="relative group aspect-[4/5] bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-cyan-500/20 transition duration-500 cursor-pointer border border-slate-700">
+                    <div class="relative group aspect-[4/5] bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-cyan-500/20 transition duration-500 cursor-pointer border border-slate-700 pdf-card">
                         <img src="${img}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" onclick="openModal('${img}')">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0B1121]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                         <button onclick="hapusGaleri(${index})" class="admin-element absolute top-3 right-3 bg-rose-600/90 text-white rounded-xl w-9 h-9 flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-lg hover:bg-rose-500 hover:scale-110 border border-rose-400/50"><i class="fas fa-trash-alt text-sm"></i></button>
@@ -744,7 +744,7 @@
             if(activeIdx >= imgs.length) activeIdx = 0;
             if(activeIdx < 0) activeIdx = imgs.length - 1;
             imgs[activeIdx].classList.add('active');
-            counter.innerText = activeIdx + 1;
+            if (counter) counter.innerText = activeIdx + 1;
         }
 
         function addBiaya() {
@@ -912,7 +912,7 @@
             }
         }
 
-        // ================= FUNGSI DOWNLOAD PDF DENGAN THEME FULL =================
+        // ================= FUNGSI DOWNLOAD PDF DENGAN THEME FULL & ANTI TERPOTONG =================
         function downloadPDF() {
             showLoader("Menyiapkan PDF...");
             
@@ -922,51 +922,57 @@
             const sections = ['sec-dashboard', 'sec-rundown', 'sec-biaya', 'sec-galeri'];
             sections.forEach(id => document.getElementById(id).classList.remove('hidden'));
 
-            // 2. Simpan styling margin & padding aslinya
+            // 2. Simpan styling asli
             const originalBg = mainElement.style.backgroundColor;
             const originalBgImage = mainElement.style.backgroundImage;
             const originalPadding = mainElement.style.padding;
             const originalMarginTop = mainElement.style.marginTop;
 
-            // 3. TERAPKAN WARNA DAN GRADIENT SECARA PAKSA KE AREA YANG DICETAK
-            // Ini akan memblokir efek latar transparan yang membuat warna menjadi keputihan/abu-abu
+            // 3. Modifikasi styling khusus PDF
+            // Mencegah elemen terpotong setengah halaman yang menyebabkan garis putih
+            const cards = mainElement.querySelectorAll('.pdf-card');
+            cards.forEach(card => card.style.pageBreakInside = 'avoid');
+
             mainElement.style.backgroundColor = '#0B1121';
             mainElement.style.backgroundImage = 'radial-gradient(circle at top right, #1e3a8a 0%, transparent 40%), radial-gradient(circle at bottom left, #0f766e 0%, transparent 40%)';
-            mainElement.style.padding = '20px'; // Beri ruang bernapas ujung PDF
-            mainElement.style.marginTop = '0'; // Hilangkan margin agar full top
+            mainElement.style.padding = '15px'; // Padding ujung PDF
+            mainElement.style.marginTop = '0'; 
 
-            // 4. Sembunyikan elemen admin dan tombol-tombol agar tidak ikut ter-print
+            // 4. Sembunyikan elemen admin dan tombol-tombol 
             const actionElements = mainElement.querySelectorAll('button, label.cursor-pointer, .admin-element, .admin-element-block, .admin-element-flex, .pdf-hide');
             const hiddenStyles = [];
             actionElements.forEach((el, index) => {
                 hiddenStyles[index] = el.style.display;
-                el.style.display = 'none'; // Sembunyikan khusus PDF
+                el.style.display = 'none'; 
             });
 
             // Konfigurasi html2pdf
             const opt = {
-                margin:       0, // HARUS 0 agar background warna tidak terpotong garis putih
+                margin:       0, // Hilangkan margin otomatis
                 filename:     'Arzayn_Holiday_Tour.pdf',
                 image:        { type: 'jpeg', quality: 1 },
                 html2canvas:  { 
                     scale: 2, 
                     useCORS: true, 
-                    backgroundColor: '#0B1121', // Memastikan canvas dasar juga berwarna gelap
-                    windowWidth: 1024 // MEMAKSA LAYOUT DESKTOP: Meskipun didownload dari HP, tampilannya tidak akan menyempit
+                    backgroundColor: '#0B1121', 
+                    scrollY: 0, 
+                    windowWidth: 480 // MEMAKSA LAYOUT MOBILE AGAR TIDAK BELEBAR / MENYEMPIT
                 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'] } // Fitur untuk membantu menghindari potongan antar halaman
             };
 
             // 5. Generate PDF
             html2pdf().set(opt).from(mainElement).save().then(() => {
                 
                 // --- KEMBALIKAN KE STATE SEMULA SETELAH SELESAI ---
+                cards.forEach(card => card.style.pageBreakInside = '');
                 mainElement.style.backgroundColor = originalBg;
                 mainElement.style.backgroundImage = originalBgImage;
                 mainElement.style.padding = originalPadding;
                 mainElement.style.marginTop = originalMarginTop;
 
-                // Munculkan kembali tombol-tombol yang disembunyikan
+                // Munculkan kembali tombol-tombol
                 actionElements.forEach((el, index) => {
                     el.style.display = hiddenStyles[index];
                 });
