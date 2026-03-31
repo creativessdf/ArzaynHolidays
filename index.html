@@ -65,15 +65,19 @@
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* KELAS KHUSUS PDF: Memaksa warna solid, mematikan gradient, dan menengahkan kanvas */
+        /* KELAS KHUSUS PDF: Reset semua margin dari browser bawaan HP/Tablet */
         .pdf-print-mode {
             background-color: #0B1121 !important;
             background-image: none !important;
             overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
-        .pdf-print-mode body, .pdf-print-mode main {
+        .pdf-print-mode body {
             background-color: #0B1121 !important;
             background-image: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
     </style>
 </head>
@@ -108,6 +112,7 @@
         </div>
     </header>
 
+    <!-- AREA YANG AKAN DISIMPAN KE PDF -->
     <main id="capture-area" class="max-w-4xl mx-auto mt-8 px-4 animate-slide-up">
         
         <!-- ================= DASHBOARD INFOGRAPHIC ================= -->
@@ -923,7 +928,7 @@
             }
         }
 
-        // ================= FUNGSI DOWNLOAD PDF SUPER-STABIL =================
+        // ================= FUNGSI DOWNLOAD PDF (DIJAMIN DI TENGAH, ANTI GEPENG & ANTI GARIS) =================
         function downloadPDF() {
             showLoader("Menyiapkan Dokumen PDF...");
             
@@ -935,11 +940,7 @@
             const sections = ['sec-dashboard', 'sec-rundown', 'sec-biaya', 'sec-galeri'];
             sections.forEach(id => document.getElementById(id).classList.remove('hidden'));
 
-            // 2. Tambahkan CSS kelas khusus print
-            html.classList.add('pdf-print-mode');
-            body.classList.add('pdf-print-mode');
-
-            // 3. Sembunyikan tombol UI
+            // 2. Sembunyikan tombol UI
             const actionElements = mainElement.querySelectorAll('button, label.cursor-pointer, .admin-element, .admin-element-block, .admin-element-flex, .pdf-hide');
             const hiddenElements = [];
             actionElements.forEach(el => {
@@ -947,39 +948,37 @@
                 el.style.display = 'none'; 
             });
 
-            // 4. RESET LAYOUT & KUNCI KE POJOK KIRI ATAS SECARA ABSOLUT (500PX)
-            // Ini akan mematikan semua faktor margin browser dan membuat PDF PASTI pas penuh dari ujung kiri ke kanan.
-            const origBodyWidth = body.style.width;
-            const origBodyMinWidth = body.style.minWidth;
-            const origBodyMargin = body.style.margin;
-            const origMainWidth = mainElement.style.width;
-            const origMainMaxWidth = mainElement.style.maxWidth;
-            const origMainMargin = mainElement.style.margin;
-            const origMainPadding = mainElement.style.padding;
-            
-            // Paksa Body menempel di kiri atas tanpa ampun
-            body.style.width = '500px';
-            body.style.minWidth = '500px';
-            body.style.margin = '0';
-            
-            // Paksa Main Container menempel dan mengisi ruang 500px secara tepat
-            mainElement.style.width = '500px';
-            mainElement.style.maxWidth = '500px';
-            mainElement.style.margin = '0';
-            mainElement.style.padding = '20px'; // Padding bernapas ke dalam konten
+            // 3. Tambahkan kelas khusus PDF yang menghapus padding/margin dari body
+            html.classList.add('pdf-print-mode');
+            body.classList.add('pdf-print-mode');
 
-            // Beri jeda 800ms agar browser selesai menyusun ulang
+            // 4. KUNCI ABSOLUT: Tarik paksa area utama tepat ke sudut kiri atas (koordinat 0,0)
+            // Ini untuk mencegah kanvas mengambil lebar layar HP secara utuh.
+            const origStyle = mainElement.getAttribute('style') || '';
+            mainElement.style.cssText = `
+                width: 480px !important; 
+                max-width: 480px !important; 
+                margin: 0 !important; 
+                padding: 15px !important; 
+                position: absolute !important; 
+                top: 0 !important; 
+                left: 0 !important; 
+                background-color: #0B1121 !important;
+                z-index: 99999;
+            `;
+
+            // Beri jeda 1 detik penuh agar browser HP/Tablet selesai merender ulang posisi ke kiri atas
             setTimeout(() => {
                 
-                // HITUNG TINGGI TOTAL SECARA AKURAT UNTUK 1 HALAMAN
+                // HITUNG TINGGI TOTAL DARI ELEMEN 480PX INI
                 const elementHeightPx = mainElement.offsetHeight;
                 const pxToMm = 0.264583; 
                 
-                // Lebar PDF dikunci persis sama dengan ukuran piksel yang ditangkap
-                const pdfWidth = 500 * pxToMm; 
+                // Lebar PDF dikunci persis 480px dikonversi ke mm
+                const pdfWidth = 480 * pxToMm; 
                 const pdfHeight = (elementHeightPx * pxToMm) + 10; 
 
-                // Konfigurasi Kertas Kustom Edge-to-Edge
+                // Konfigurasi kamera html2canvas: Tangkap persis dari kordinat 0 sampai 480px
                 const opt = {
                     margin:       0,
                     filename:     'Arzayn_Holiday_Tour.pdf',
@@ -988,30 +987,24 @@
                         scale: 2, 
                         useCORS: true, 
                         backgroundColor: '#0B1121', 
-                        scrollY: 0, 
-                        scrollX: 0,
-                        width: 500, // PAKSA TANGKAPAN DARI 0 SAMPAI 500PX
-                        windowWidth: 500
+                        width: 480,       // KUNCI KAMERA: Hanya melihat selebar 480px
+                        height: elementHeightPx,
+                        windowWidth: 480, // Paksa browser bertingkah seolah layarnya 480px
+                        x: 0,             // Mulai potong dari X = 0
+                        y: 0              // Mulai potong dari Y = 0
                     },
                     jsPDF:        { 
                         unit: 'mm', 
-                        format: [pdfWidth, pdfHeight], 
+                        format: [pdfWidth, pdfHeight], // Kertas persis seukuran tangkapan
                         orientation: 'portrait' 
                     }
                 };
 
                 html2pdf().set(opt).from(mainElement).save().then(() => {
                     
-                    // --- KEMBALIKAN KE LAYOUT NORMAL RESPONSIVE ---
-                    body.style.width = origBodyWidth;
-                    body.style.minWidth = origBodyMinWidth;
-                    body.style.margin = origBodyMargin;
+                    // --- KEMBALIKAN SEMUANYA KE NORMAL ---
+                    mainElement.setAttribute('style', origStyle);
                     
-                    mainElement.style.width = origMainWidth;
-                    mainElement.style.maxWidth = origMainMaxWidth;
-                    mainElement.style.margin = origMainMargin;
-                    mainElement.style.padding = origMainPadding;
-
                     html.classList.remove('pdf-print-mode');
                     body.classList.remove('pdf-print-mode');
 
@@ -1035,7 +1028,7 @@
                     hideLoader();
                     alert("Gagal membuat PDF.");
                 });
-            }, 800); 
+            }, 1000); 
         }
 
         function formatRp(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); }
