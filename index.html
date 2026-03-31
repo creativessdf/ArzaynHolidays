@@ -35,8 +35,14 @@
         .is-admin .admin-element-flex { display: flex !important; }
         .is-admin .admin-element-block { display: block !important; }
         
-        /* Slider & Images */
-        .carousel-img { display: none; width: 100%; height: 220px; object-fit: cover; border-radius: 1rem; }
+        /* Slider & Images (MENGGUNAKAN DIV BACKGROUND AGAR TIDAK GEPENG DI PDF) */
+        .carousel-img { 
+            display: none; 
+            width: 100%; 
+            height: 220px; 
+            border-radius: 1rem; 
+            background-color: #1e293b;
+        }
         .carousel-img.active { display: block; animation: fadeIn 0.5s; }
         
         /* Custom Animations */
@@ -65,6 +71,20 @@
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* KELAS KHUSUS PDF UNTUK MENCEGAH GARIS PUTIH & POTONGAN */
+        .pdf-print-mode, .pdf-print-mode body, .pdf-print-mode main {
+            background-color: #0B1121 !important;
+            background-image: none !important; /* Hilangkan gradient transparan */
+        }
+        .pdf-print-mode main {
+            padding: 15px 10px !important;
+            margin: 0 !important;
+        }
+        .pdf-card {
+            page-break-inside: avoid; /* Mencegah elemen dipotong setengah */
+            break-inside: avoid;
+        }
     </style>
 </head>
 <body class="pb-24 text-slate-300">
@@ -114,7 +134,7 @@
 
                 <div class="relative inline-block mt-6 md:mt-2 mb-4 z-10">
                     <div class="w-28 h-28 p-1 bg-gradient-to-tr from-blue-500 to-cyan-400 rounded-full mx-auto shadow-2xl">
-                        <img id="dash-logo" src="https://via.placeholder.com/150?text=Logo" class="w-full h-full rounded-full border-4 border-slate-900 object-cover bg-slate-900">
+                        <div id="dash-logo" class="w-full h-full rounded-full border-4 border-slate-900 bg-cover bg-center" style="background-image: url('https://via.placeholder.com/150?text=Logo');"></div>
                     </div>
                     <label class="admin-element absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-2.5 cursor-pointer shadow-xl hover:bg-blue-500 hover:scale-110 transition border border-blue-400">
                         <i class="fas fa-camera text-sm"></i>
@@ -481,7 +501,10 @@
                 document.getElementById('dash-hero').style.backgroundImage = 'none';
             }
 
-            if(d.logo) document.getElementById('dash-logo').src = d.logo;
+            if(d.logo) {
+                document.getElementById('dash-logo').style.backgroundImage = `url(${d.logo})`;
+            }
+
             if(d.headline) document.getElementById('dash-headline').innerText = d.headline;
             if(d.subheadline) document.getElementById('dash-subheadline').innerText = d.subheadline;
             if(d.destinasi) document.getElementById('dash-destinasi').innerText = d.destinasi;
@@ -538,7 +561,8 @@
                 let sliderControlsHtml = '';
                 
                 if (item.images && item.images.length > 0) {
-                    let imgs = item.images.map((img, i) => `<img src="${img}" class="carousel-img ${i===0 ? 'active' : ''}" data-index="${i}" onclick="openModal(this.src)">`).join('');
+                    // MENGGUNAKAN DIV SEBAGAI BACKGROUND GAMBAR AGAR TIDAK GEPENG
+                    let imgs = item.images.map((img, i) => `<div class="carousel-img ${i===0 ? 'active' : ''} bg-cover bg-center" style="background-image: url('${img}')" data-index="${i}" onclick="openModal('${img}')"></div>`).join('');
                     if (item.images.length > 1) {
                         sliderControlsHtml = `
                             <button onclick="moveSlide('${item.id}', -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-slate-900/80 text-white border border-slate-600 rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition shadow pdf-hide"><i class="fas fa-chevron-left text-xs"></i></button>
@@ -616,9 +640,10 @@
                 return;
             }
             appData.galeri.forEach((img, index) => {
+                // DIV BACKGROUND AGAR TIDAK GEPENG
                 grid.innerHTML += `
                     <div class="relative group aspect-[4/5] bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-cyan-500/20 transition duration-500 cursor-pointer border border-slate-700 pdf-card">
-                        <img src="${img}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" onclick="openModal('${img}')">
+                        <div class="w-full h-full bg-cover bg-center transform group-hover:scale-110 transition duration-700" style="background-image: url('${img}')" onclick="openModal('${img}')"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0B1121]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                         <button onclick="hapusGaleri(${index})" class="admin-element absolute top-3 right-3 bg-rose-600/90 text-white rounded-xl w-9 h-9 flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-lg hover:bg-rose-500 hover:scale-110 border border-rose-400/50"><i class="fas fa-trash-alt text-sm"></i></button>
                     </div>
@@ -803,7 +828,7 @@
             
             if(type === 'dashboard') {
                 appData.dashboard.logo = base64Img;
-                document.getElementById('dash-logo').src = base64Img;
+                document.getElementById('dash-logo').style.backgroundImage = `url(${base64Img})`;
             } else if (type === 'dashboardBg') {
                 appData.dashboard.bgImage = base64Img;
                 document.getElementById('dash-hero').style.backgroundImage = `url(${base64Img})`;
@@ -912,88 +937,76 @@
             }
         }
 
-        // ================= FUNGSI DOWNLOAD PDF DENGAN THEME FULL & ANTI TERPOTONG =================
+        // ================= FUNGSI DOWNLOAD PDF (ANTI GEPENG & ANTI GARIS PUTIH) =================
         function downloadPDF() {
-            showLoader("Menyiapkan PDF...");
+            showLoader("Menyiapkan Dokumen PDF...");
             
             const mainElement = document.querySelector('main');
+            const body = document.body;
 
-            // 1. Tampilkan semua section sementara agar semua masuk ke dalam PDF
+            // 1. Tampilkan semua section
             const sections = ['sec-dashboard', 'sec-rundown', 'sec-biaya', 'sec-galeri'];
             sections.forEach(id => document.getElementById(id).classList.remove('hidden'));
 
-            // 2. Simpan styling asli
-            const originalBg = mainElement.style.backgroundColor;
-            const originalBgImage = mainElement.style.backgroundImage;
-            const originalPadding = mainElement.style.padding;
-            const originalMarginTop = mainElement.style.marginTop;
+            // 2. Tambahkan CSS kelas khusus print ke HTML dan Body 
+            document.documentElement.classList.add('pdf-print-mode');
+            body.classList.add('pdf-print-mode');
 
-            // 3. Modifikasi styling khusus PDF
-            // Mencegah elemen terpotong setengah halaman yang menyebabkan garis putih
-            const cards = mainElement.querySelectorAll('.pdf-card');
-            cards.forEach(card => card.style.pageBreakInside = 'avoid');
-
-            mainElement.style.backgroundColor = '#0B1121';
-            mainElement.style.backgroundImage = 'radial-gradient(circle at top right, #1e3a8a 0%, transparent 40%), radial-gradient(circle at bottom left, #0f766e 0%, transparent 40%)';
-            mainElement.style.padding = '15px'; // Padding ujung PDF
-            mainElement.style.marginTop = '0'; 
-
-            // 4. Sembunyikan elemen admin dan tombol-tombol 
+            // 3. Sembunyikan elemen admin dan UI yang tidak perlu di-print
             const actionElements = mainElement.querySelectorAll('button, label.cursor-pointer, .admin-element, .admin-element-block, .admin-element-flex, .pdf-hide');
-            const hiddenStyles = [];
-            actionElements.forEach((el, index) => {
-                hiddenStyles[index] = el.style.display;
+            const hiddenElements = [];
+            actionElements.forEach(el => {
+                hiddenElements.push({ element: el, display: el.style.display });
                 el.style.display = 'none'; 
             });
 
             // Konfigurasi html2pdf
             const opt = {
-                margin:       0, // Hilangkan margin otomatis
+                margin:       0, // Tetap 0 agar memenuhi kertas
                 filename:     'Arzayn_Holiday_Tour.pdf',
                 image:        { type: 'jpeg', quality: 1 },
                 html2canvas:  { 
                     scale: 2, 
                     useCORS: true, 
-                    backgroundColor: '#0B1121', 
+                    backgroundColor: '#0B1121', // Latar belakang canvas disamakan
                     scrollY: 0, 
-                    windowWidth: 480 // MEMAKSA LAYOUT MOBILE AGAR TIDAK BELEBAR / MENYEMPIT
+                    windowWidth: 480 // Format Mobile Vertikal / tidak melebar
                 },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: ['css', 'legacy'] } // Fitur untuk membantu menghindari potongan antar halaman
+                pagebreak:    { mode: ['css', 'legacy'] } // Fitur untuk membaca "page-break-inside: avoid"
             };
 
-            // 5. Generate PDF
-            html2pdf().set(opt).from(mainElement).save().then(() => {
-                
-                // --- KEMBALIKAN KE STATE SEMULA SETELAH SELESAI ---
-                cards.forEach(card => card.style.pageBreakInside = '');
-                mainElement.style.backgroundColor = originalBg;
-                mainElement.style.backgroundImage = originalBgImage;
-                mainElement.style.padding = originalPadding;
-                mainElement.style.marginTop = originalMarginTop;
+            // Beri jeda 0.5 detik agar browser memproses CSS "pdf-print-mode" terlebih dahulu
+            setTimeout(() => {
+                html2pdf().set(opt).from(mainElement).save().then(() => {
+                    
+                    // --- KEMBALIKAN KE STATE SEMULA SETELAH SELESAI ---
+                    document.documentElement.classList.remove('pdf-print-mode');
+                    body.classList.remove('pdf-print-mode');
 
-                // Munculkan kembali tombol-tombol
-                actionElements.forEach((el, index) => {
-                    el.style.display = hiddenStyles[index];
-                });
-
-                // Sembunyikan kembali tab yang sedang tidak aktif
-                const activeTabBtn = document.querySelector('.tab-active');
-                if(activeTabBtn) {
-                    const activeTabId = activeTabBtn.id.replace('tab-', 'sec-');
-                    sections.forEach(id => {
-                        if(id !== activeTabId) {
-                            document.getElementById(id).classList.add('hidden');
-                        }
+                    // Munculkan kembali tombol-tombol
+                    hiddenElements.forEach(item => {
+                        item.element.style.display = item.display;
                     });
-                }
-                
-                hideLoader();
-            }).catch(err => {
-                console.error("PDF Error: ", err);
-                hideLoader();
-                alert("Gagal membuat PDF.");
-            });
+
+                    // Sembunyikan kembali tab yang sedang tidak aktif
+                    const activeTabBtn = document.querySelector('.tab-active');
+                    if(activeTabBtn) {
+                        const activeTabId = activeTabBtn.id.replace('tab-', 'sec-');
+                        sections.forEach(id => {
+                            if(id !== activeTabId) {
+                                document.getElementById(id).classList.add('hidden');
+                            }
+                        });
+                    }
+                    
+                    hideLoader();
+                }).catch(err => {
+                    console.error("PDF Error: ", err);
+                    hideLoader();
+                    alert("Gagal membuat PDF.");
+                });
+            }, 500);
         }
 
         function formatRp(angka) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); }
