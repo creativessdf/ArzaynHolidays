@@ -33,13 +33,11 @@
         .is-admin .admin-element-flex { display: flex !important; }
         .is-admin .admin-element-block { display: block !important; }
         
-        /* Gambar menggunakan tag img dengan object-fit cover yang dikunci */
+        /* Gambar DIJAMIN ANTI GEPENG karena menggunakan div background cover */
         .carousel-img { 
             display: none; 
             width: 100%; 
             height: 220px; 
-            object-fit: cover;
-            object-position: center;
             border-radius: 1rem; 
             background-color: #1e293b;
         }
@@ -67,13 +65,15 @@
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* KELAS KHUSUS PDF: Memaksa warna solid dan mematikan gradient agar tidak pucat */
+        /* KELAS KHUSUS PDF: Memaksa warna solid, mematikan gradient, dan menengahkan kanvas */
         .pdf-print-mode {
             background-color: #0B1121 !important;
             background-image: none !important;
+            overflow: hidden !important;
         }
-        .pdf-print-mode main {
+        .pdf-print-mode body, .pdf-print-mode main {
             background-color: #0B1121 !important;
+            background-image: none !important;
         }
     </style>
 </head>
@@ -123,7 +123,8 @@
 
                 <div class="relative inline-block mt-6 md:mt-2 mb-4 z-10">
                     <div class="w-28 h-28 p-1 bg-gradient-to-tr from-blue-500 to-cyan-400 rounded-full mx-auto shadow-2xl">
-                        <img id="dash-logo" src="https://via.placeholder.com/150?text=Logo" class="w-full h-full rounded-full border-4 border-slate-900 object-cover bg-slate-900">
+                        <!-- PENGGUNAAN DIV BACKGROUND UNTUK ANTI GEPENG -->
+                        <div id="dash-logo" class="w-full h-full rounded-full border-4 border-slate-900 bg-cover bg-center" style="background-image: url('https://via.placeholder.com/150?text=Logo');"></div>
                     </div>
                     <label class="admin-element absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-2.5 cursor-pointer shadow-xl hover:bg-blue-500 hover:scale-110 transition border border-blue-400">
                         <i class="fas fa-camera text-sm"></i>
@@ -488,7 +489,7 @@
             }
 
             if(d.logo) {
-                document.getElementById('dash-logo').src = d.logo;
+                document.getElementById('dash-logo').style.backgroundImage = `url(${d.logo})`;
             }
 
             if(d.headline) document.getElementById('dash-headline').innerText = d.headline;
@@ -547,8 +548,8 @@
                 let sliderControlsHtml = '';
                 
                 if (item.images && item.images.length > 0) {
-                    // MENGGUNAKAN TAG IMG NORMAL DENGAN OBJECT-FIT AGAR ANTI GEPENG
-                    let imgs = item.images.map((img, i) => `<img src="${img}" class="carousel-img ${i===0 ? 'active' : ''}" data-index="${i}" onclick="openModal('${img}')" />`).join('');
+                    // PENGGUNAAN DIV BACKGROUND AGAR GAMBAR TIDAK PERNAH GEPENG DI PDF
+                    let imgs = item.images.map((img, i) => `<div class="carousel-img ${i===0 ? 'active' : ''} bg-cover bg-center" style="background-image: url('${img}');" data-index="${i}" onclick="openModal('${img}')"></div>`).join('');
                     if (item.images.length > 1) {
                         sliderControlsHtml = `
                             <button onclick="moveSlide('${item.id}', -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-slate-900/80 text-white border border-slate-600 rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition shadow pdf-hide"><i class="fas fa-chevron-left text-xs"></i></button>
@@ -628,7 +629,7 @@
             appData.galeri.forEach((img, index) => {
                 grid.innerHTML += `
                     <div class="relative group aspect-[4/5] bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-cyan-500/20 transition duration-500 cursor-pointer border border-slate-700">
-                        <img src="${img}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" onclick="openModal('${img}')" />
+                        <div class="w-full h-full bg-cover bg-center transform group-hover:scale-110 transition duration-700" style="background-image: url('${img}');" onclick="openModal('${img}')"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0B1121]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                         <button onclick="hapusGaleri(${index})" class="admin-element absolute top-3 right-3 bg-rose-600/90 text-white rounded-xl w-9 h-9 flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-lg hover:bg-rose-500 hover:scale-110 border border-rose-400/50"><i class="fas fa-trash-alt text-sm"></i></button>
                     </div>
@@ -813,7 +814,7 @@
             
             if(type === 'dashboard') {
                 appData.dashboard.logo = base64Img;
-                document.getElementById('dash-logo').src = base64Img;
+                document.getElementById('dash-logo').style.backgroundImage = `url(${base64Img})`;
             } else if (type === 'dashboardBg') {
                 appData.dashboard.bgImage = base64Img;
                 document.getElementById('dash-hero').style.backgroundImage = `url(${base64Img})`;
@@ -922,19 +923,20 @@
             }
         }
 
-        // ================= FUNGSI DOWNLOAD PDF (SATU HALAMAN PANJANG ANTI POTONG & ANTI GEPENG) =================
+        // ================= FUNGSI DOWNLOAD PDF SUPER-STABIL =================
         function downloadPDF() {
             showLoader("Menyiapkan Dokumen PDF...");
             
             const mainElement = document.getElementById('capture-area');
             const body = document.body;
+            const html = document.documentElement;
 
             // 1. Tampilkan semua section ke dalam layar
             const sections = ['sec-dashboard', 'sec-rundown', 'sec-biaya', 'sec-galeri'];
             sections.forEach(id => document.getElementById(id).classList.remove('hidden'));
 
             // 2. Tambahkan CSS kelas khusus print
-            document.documentElement.classList.add('pdf-print-mode');
+            html.classList.add('pdf-print-mode');
             body.classList.add('pdf-print-mode');
 
             // 3. Sembunyikan tombol UI
@@ -945,29 +947,39 @@
                 el.style.display = 'none'; 
             });
 
-            // 4. KUNCI LEBAR KE 500PX AGAR FORMAT SELALU SAMA (Mencegah Gepeng/Melebar)
-            const originalWidth = mainElement.style.width;
-            const originalMaxWidth = mainElement.style.maxWidth;
-            const originalMargin = mainElement.style.margin;
-            const originalPos = mainElement.style.position;
+            // 4. RESET LAYOUT & KUNCI KE POJOK KIRI ATAS SECARA ABSOLUT (500PX)
+            // Ini akan mematikan semua faktor margin browser dan membuat PDF PASTI pas penuh dari ujung kiri ke kanan.
+            const origBodyWidth = body.style.width;
+            const origBodyMinWidth = body.style.minWidth;
+            const origBodyMargin = body.style.margin;
+            const origMainWidth = mainElement.style.width;
+            const origMainMaxWidth = mainElement.style.maxWidth;
+            const origMainMargin = mainElement.style.margin;
+            const origMainPadding = mainElement.style.padding;
             
+            // Paksa Body menempel di kiri atas tanpa ampun
+            body.style.width = '500px';
+            body.style.minWidth = '500px';
+            body.style.margin = '0';
+            
+            // Paksa Main Container menempel dan mengisi ruang 500px secara tepat
             mainElement.style.width = '500px';
             mainElement.style.maxWidth = '500px';
             mainElement.style.margin = '0';
-            mainElement.style.position = 'relative';
+            mainElement.style.padding = '20px'; // Padding bernapas ke dalam konten
 
-            // 5. Beri jeda waktu yang cukup (800ms) agar browser menyusun ulang gambar (mengatasi bug squished)
+            // Beri jeda 800ms agar browser selesai menyusun ulang
             setTimeout(() => {
                 
-                // 6. HITUNG TINGGI TOTAL SECARA AKURAT UNTUK DIBUAT 1 HALAMAN
+                // HITUNG TINGGI TOTAL SECARA AKURAT UNTUK 1 HALAMAN
                 const elementHeightPx = mainElement.offsetHeight;
                 const pxToMm = 0.264583; 
                 
-                // Lebar PDF dikunci ke 132mm (Setara dengan 500px)
-                const pdfWidth = 132.29; 
-                const pdfHeight = (elementHeightPx * pxToMm);
+                // Lebar PDF dikunci persis sama dengan ukuran piksel yang ditangkap
+                const pdfWidth = 500 * pxToMm; 
+                const pdfHeight = (elementHeightPx * pxToMm) + 10; 
 
-                // Konfigurasi Kertas Kustom (Satu lembar panjang)
+                // Konfigurasi Kertas Kustom Edge-to-Edge
                 const opt = {
                     margin:       0,
                     filename:     'Arzayn_Holiday_Tour.pdf',
@@ -977,24 +989,30 @@
                         useCORS: true, 
                         backgroundColor: '#0B1121', 
                         scrollY: 0, 
-                        windowWidth: 500 // Sinkronisasi dengan lebar paksaan di atas
+                        scrollX: 0,
+                        width: 500, // PAKSA TANGKAPAN DARI 0 SAMPAI 500PX
+                        windowWidth: 500
                     },
                     jsPDF:        { 
                         unit: 'mm', 
-                        format: [pdfWidth, pdfHeight], // KUNCINYA DI SINI: Array dimensi khusus
+                        format: [pdfWidth, pdfHeight], 
                         orientation: 'portrait' 
                     }
                 };
 
                 html2pdf().set(opt).from(mainElement).save().then(() => {
                     
-                    // --- KEMBALIKAN KE LAYOUT NORMAL ---
-                    mainElement.style.width = originalWidth;
-                    mainElement.style.maxWidth = originalMaxWidth;
-                    mainElement.style.margin = originalMargin;
-                    mainElement.style.position = originalPos;
+                    // --- KEMBALIKAN KE LAYOUT NORMAL RESPONSIVE ---
+                    body.style.width = origBodyWidth;
+                    body.style.minWidth = origBodyMinWidth;
+                    body.style.margin = origBodyMargin;
+                    
+                    mainElement.style.width = origMainWidth;
+                    mainElement.style.maxWidth = origMainMaxWidth;
+                    mainElement.style.margin = origMainMargin;
+                    mainElement.style.padding = origMainPadding;
 
-                    document.documentElement.classList.remove('pdf-print-mode');
+                    html.classList.remove('pdf-print-mode');
                     body.classList.remove('pdf-print-mode');
 
                     hiddenElements.forEach(item => {
