@@ -923,12 +923,15 @@
             sections.forEach(id => document.getElementById(id).classList.remove('hidden'));
 
             // 2. Simpan styling margin & padding aslinya
-            const originalBg = mainElement.style.background;
+            const originalBg = mainElement.style.backgroundColor;
+            const originalBgImage = mainElement.style.backgroundImage;
             const originalPadding = mainElement.style.padding;
             const originalMarginTop = mainElement.style.marginTop;
 
             // 3. TERAPKAN WARNA DAN GRADIENT SECARA PAKSA KE AREA YANG DICETAK
-            mainElement.style.background = '#0B1121 radial-gradient(circle at top right, #1e3a8a 0%, transparent 40%), radial-gradient(circle at bottom left, #0f766e 0%, transparent 40%)';
+            // Ini akan memblokir efek latar transparan yang membuat warna menjadi keputihan/abu-abu
+            mainElement.style.backgroundColor = '#0B1121';
+            mainElement.style.backgroundImage = 'radial-gradient(circle at top right, #1e3a8a 0%, transparent 40%), radial-gradient(circle at bottom left, #0f766e 0%, transparent 40%)';
             mainElement.style.padding = '20px'; // Beri ruang bernapas ujung PDF
             mainElement.style.marginTop = '0'; // Hilangkan margin agar full top
 
@@ -944,11 +947,12 @@
             const opt = {
                 margin:       0, // HARUS 0 agar background warna tidak terpotong garis putih
                 filename:     'Arzayn_Holiday_Tour.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
+                image:        { type: 'jpeg', quality: 1 },
                 html2canvas:  { 
                     scale: 2, 
                     useCORS: true, 
-                    backgroundColor: '#0B1121' // Warna dasar gelap
+                    backgroundColor: '#0B1121', // Memastikan canvas dasar juga berwarna gelap
+                    windowWidth: 1024 // MEMAKSA LAYOUT DESKTOP: Meskipun didownload dari HP, tampilannya tidak akan menyempit
                 },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
@@ -957,7 +961,8 @@
             html2pdf().set(opt).from(mainElement).save().then(() => {
                 
                 // --- KEMBALIKAN KE STATE SEMULA SETELAH SELESAI ---
-                mainElement.style.background = originalBg;
+                mainElement.style.backgroundColor = originalBg;
+                mainElement.style.backgroundImage = originalBgImage;
                 mainElement.style.padding = originalPadding;
                 mainElement.style.marginTop = originalMarginTop;
 
