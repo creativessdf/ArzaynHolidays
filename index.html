@@ -6,21 +6,20 @@
     <title>Arzyan Holiday - Tour Cikarang Jogja</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Library untuk generate PDF -->
+    <!-- Library html2pdf terbaru -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #0B1121; /* Dark Navy Base */
+            background-color: #0B1121; 
             background-image: radial-gradient(circle at top right, #1e3a8a 0%, transparent 40%),
                               radial-gradient(circle at bottom left, #0f766e 0%, transparent 40%);
             background-attachment: fixed;
             color: #f8fafc;
         }
         
-        /* Infographic Tab Styling for Dark Theme */
         .tab-active { 
             background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%); 
             color: white !important; 
@@ -29,23 +28,23 @@
             box-shadow: 0 4px 14px 0 rgba(6, 182, 212, 0.39);
         }
         
-        /* Security Classes */
         .admin-element, .admin-element-block, .admin-element-flex { display: none !important; }
         .is-admin .admin-element { display: inline-block !important; }
         .is-admin .admin-element-flex { display: flex !important; }
         .is-admin .admin-element-block { display: block !important; }
         
-        /* Slider & Images (MENGGUNAKAN DIV BACKGROUND AGAR TIDAK GEPENG DI PDF) */
+        /* Gambar menggunakan tag img dengan object-fit cover yang dikunci */
         .carousel-img { 
             display: none; 
             width: 100%; 
             height: 220px; 
+            object-fit: cover;
+            object-position: center;
             border-radius: 1rem; 
             background-color: #1e293b;
         }
         .carousel-img.active { display: block; animation: fadeIn 0.5s; }
         
-        /* Custom Animations */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -53,33 +52,28 @@
         .animate-zoom { animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
-        /* Timeline Line Gradient */
         .timeline-line::before {
             background: linear-gradient(to bottom, #3b82f6, #06b6d4, #f59e0b, #3b82f6);
         }
 
-        /* Diagonal warning pattern */
         .warning-pattern {
             background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(245, 158, 11, 0.05) 10px, rgba(245, 158, 11, 0.05) 20px);
         }
         
-        /* Loader */
         #loader { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(11, 17, 33, 0.9); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(8px); }
         
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* KELAS KHUSUS PDF UNTUK MENCEGAH GARIS PUTIH & POTONGAN */
-        .pdf-print-mode, .pdf-print-mode body, .pdf-print-mode main {
+        /* KELAS KHUSUS PDF: Memaksa warna solid dan mematikan gradient agar tidak pucat */
+        .pdf-print-mode {
             background-color: #0B1121 !important;
-            background-image: none !important; /* Hilangkan gradient transparan */
+            background-image: none !important;
         }
         .pdf-print-mode main {
-            padding: 15px 10px !important;
-            margin: 0 auto !important;
+            background-color: #0B1121 !important;
         }
     </style>
 </head>
@@ -96,7 +90,6 @@
         <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 tracking-tight">Arzayn Holiday</h1>
             <div class="flex items-center gap-2">
-                <!-- Tombol Save PDF -->
                 <button onclick="downloadPDF()" class="text-xs bg-cyan-900/40 hover:bg-cyan-800 text-cyan-400 font-bold py-1.5 px-4 rounded-full transition duration-300 border border-cyan-700 shadow-inner flex items-center">
                     <i class="fas fa-file-pdf mr-1.5"></i> Save PDF
                 </button>
@@ -115,7 +108,7 @@
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto mt-8 px-4 animate-slide-up">
+    <main id="capture-area" class="max-w-4xl mx-auto mt-8 px-4 animate-slide-up">
         
         <!-- ================= DASHBOARD INFOGRAPHIC ================= -->
         <section id="sec-dashboard">
@@ -130,7 +123,7 @@
 
                 <div class="relative inline-block mt-6 md:mt-2 mb-4 z-10">
                     <div class="w-28 h-28 p-1 bg-gradient-to-tr from-blue-500 to-cyan-400 rounded-full mx-auto shadow-2xl">
-                        <div id="dash-logo" class="w-full h-full rounded-full border-4 border-slate-900 bg-cover bg-center" style="background-image: url('https://via.placeholder.com/150?text=Logo');"></div>
+                        <img id="dash-logo" src="https://via.placeholder.com/150?text=Logo" class="w-full h-full rounded-full border-4 border-slate-900 object-cover bg-slate-900">
                     </div>
                     <label class="admin-element absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-2.5 cursor-pointer shadow-xl hover:bg-blue-500 hover:scale-110 transition border border-blue-400">
                         <i class="fas fa-camera text-sm"></i>
@@ -364,7 +357,6 @@
         </div>
     </div>
 
-    <!-- SCRIPT LOGIKA -->
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxjPUaxsJ6KEmUoT3iWD7ldL_jKfw02vbyddysv8ClcuNrbkqDIbdjC6lGe-XTz6Jpa/exec"; 
         const ADMIN_PIN = "obikasep";
@@ -440,7 +432,6 @@
             document.getElementById('tab-' + tabId).classList.remove('text-slate-400');
         }
 
-        // ================= ADMIN LOGIN =================
         function toggleAdmin() {
             if (isAdmin) {
                 isAdmin = false;
@@ -480,7 +471,6 @@
         }
         function hideLoader() { document.getElementById('loader').style.display = 'none'; }
 
-        // ================= RENDERING =================
         function renderAll() {
             renderDashboard();
             renderRundown();
@@ -498,7 +488,7 @@
             }
 
             if(d.logo) {
-                document.getElementById('dash-logo').style.backgroundImage = `url(${d.logo})`;
+                document.getElementById('dash-logo').src = d.logo;
             }
 
             if(d.headline) document.getElementById('dash-headline').innerText = d.headline;
@@ -557,8 +547,8 @@
                 let sliderControlsHtml = '';
                 
                 if (item.images && item.images.length > 0) {
-                    // MENGGUNAKAN DIV BACKGROUND AGAR GAMBAR SELALU PROPORSIONAL (ANTI GEPENG)
-                    let imgs = item.images.map((img, i) => `<div class="carousel-img ${i===0 ? 'active' : ''} bg-cover bg-center" style="background-image: url('${img}')" data-index="${i}" onclick="openModal('${img}')"></div>`).join('');
+                    // MENGGUNAKAN TAG IMG NORMAL DENGAN OBJECT-FIT AGAR ANTI GEPENG
+                    let imgs = item.images.map((img, i) => `<img src="${img}" class="carousel-img ${i===0 ? 'active' : ''}" data-index="${i}" onclick="openModal('${img}')" />`).join('');
                     if (item.images.length > 1) {
                         sliderControlsHtml = `
                             <button onclick="moveSlide('${item.id}', -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-slate-900/80 text-white border border-slate-600 rounded-full w-8 h-8 flex items-center justify-center hover:bg-black transition shadow pdf-hide"><i class="fas fa-chevron-left text-xs"></i></button>
@@ -566,7 +556,7 @@
                             <div class="absolute bottom-3 left-0 right-0 text-center pdf-hide"><span class="bg-[#0B1121]/80 backdrop-blur-sm text-cyan-400 border border-cyan-900/50 text-[10px] font-bold px-3 py-1 rounded-full tracking-widest"><span id="slide-count-${item.id}">1</span> / ${item.images.length}</span></div>
                         `;
                     }
-                    imgHtml = `<div class="relative mt-5 slider-container shadow-md rounded-[1rem] overflow-hidden border border-slate-700" id="slider-${item.id}">${imgs}${sliderControlsHtml}</div>`;
+                    imgHtml = `<div class="relative mt-5 shadow-md rounded-[1rem] overflow-hidden border border-slate-700" id="slider-${item.id}">${imgs}${sliderControlsHtml}</div>`;
                 }
 
                 const dotIcons = ['fa-location-dot', 'fa-clock', 'fa-flag', 'fa-star', 'fa-compass'];
@@ -638,7 +628,7 @@
             appData.galeri.forEach((img, index) => {
                 grid.innerHTML += `
                     <div class="relative group aspect-[4/5] bg-slate-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-cyan-500/20 transition duration-500 cursor-pointer border border-slate-700">
-                        <div class="w-full h-full bg-cover bg-center transform group-hover:scale-110 transition duration-700" style="background-image: url('${img}')" onclick="openModal('${img}')"></div>
+                        <img src="${img}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" onclick="openModal('${img}')" />
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0B1121]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                         <button onclick="hapusGaleri(${index})" class="admin-element absolute top-3 right-3 bg-rose-600/90 text-white rounded-xl w-9 h-9 flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-lg hover:bg-rose-500 hover:scale-110 border border-rose-400/50"><i class="fas fa-trash-alt text-sm"></i></button>
                     </div>
@@ -823,7 +813,7 @@
             
             if(type === 'dashboard') {
                 appData.dashboard.logo = base64Img;
-                document.getElementById('dash-logo').style.backgroundImage = `url(${base64Img})`;
+                document.getElementById('dash-logo').src = base64Img;
             } else if (type === 'dashboardBg') {
                 appData.dashboard.bgImage = base64Img;
                 document.getElementById('dash-hero').style.backgroundImage = `url(${base64Img})`;
@@ -932,18 +922,18 @@
             }
         }
 
-        // ================= FUNGSI DOWNLOAD PDF (SATU HALAMAN PANJANG ANTI POTONG) =================
+        // ================= FUNGSI DOWNLOAD PDF (SATU HALAMAN PANJANG ANTI POTONG & ANTI GEPENG) =================
         function downloadPDF() {
             showLoader("Menyiapkan Dokumen PDF...");
             
-            const mainElement = document.querySelector('main');
+            const mainElement = document.getElementById('capture-area');
             const body = document.body;
 
-            // 1. Tampilkan semua section
+            // 1. Tampilkan semua section ke dalam layar
             const sections = ['sec-dashboard', 'sec-rundown', 'sec-biaya', 'sec-galeri'];
             sections.forEach(id => document.getElementById(id).classList.remove('hidden'));
 
-            // 2. Tambahkan CSS kelas khusus print untuk mematikan efek gradien yang bikin pucat
+            // 2. Tambahkan CSS kelas khusus print
             document.documentElement.classList.add('pdf-print-mode');
             body.classList.add('pdf-print-mode');
 
@@ -955,27 +945,29 @@
                 el.style.display = 'none'; 
             });
 
-            // 4. Set ukuran main ke format mobile strict (480px)
+            // 4. KUNCI LEBAR KE 500PX AGAR FORMAT SELALU SAMA (Mencegah Gepeng/Melebar)
             const originalWidth = mainElement.style.width;
             const originalMaxWidth = mainElement.style.maxWidth;
             const originalMargin = mainElement.style.margin;
+            const originalPos = mainElement.style.position;
             
-            mainElement.style.width = '480px';
-            mainElement.style.maxWidth = '480px';
-            mainElement.style.margin = '0 auto';
+            mainElement.style.width = '500px';
+            mainElement.style.maxWidth = '500px';
+            mainElement.style.margin = '0';
+            mainElement.style.position = 'relative';
 
-            // 5. Beri jeda 800ms agar browser selesai merender perubahan tinggi
+            // 5. Beri jeda waktu yang cukup (800ms) agar browser menyusun ulang gambar (mengatasi bug squished)
             setTimeout(() => {
                 
-                // KALKULASI TINGGI CANVAS AKTUAL UNTUK MEMBUAT SATU HALAMAN PDF PANJANG
-                const elementHeightPx = mainElement.scrollHeight;
-                const pxToMm = 0.264583; // Konstanta PX ke MM
+                // 6. HITUNG TINGGI TOTAL SECARA AKURAT UNTUK DIBUAT 1 HALAMAN
+                const elementHeightPx = mainElement.offsetHeight;
+                const pxToMm = 0.264583; 
                 
-                // Lebar PDF dikunci ke 127mm (Kira-kira mewakili layar HP 480px)
-                const pdfWidth = 127; 
-                // Tinggi dihitung persis dengan tinggi layar agar tidak perlu ada Page Break
-                const pdfHeight = (elementHeightPx * pxToMm) + 15; // +15mm untuk napas di paling bawah
+                // Lebar PDF dikunci ke 132mm (Setara dengan 500px)
+                const pdfWidth = 132.29; 
+                const pdfHeight = (elementHeightPx * pxToMm);
 
+                // Konfigurasi Kertas Kustom (Satu lembar panjang)
                 const opt = {
                     margin:       0,
                     filename:     'Arzayn_Holiday_Tour.pdf',
@@ -985,11 +977,11 @@
                         useCORS: true, 
                         backgroundColor: '#0B1121', 
                         scrollY: 0, 
-                        windowWidth: 480 
+                        windowWidth: 500 // Sinkronisasi dengan lebar paksaan di atas
                     },
                     jsPDF:        { 
                         unit: 'mm', 
-                        format: [pdfWidth, pdfHeight], // CUSTOM TINGGI MEMANJANG KE BAWAH
+                        format: [pdfWidth, pdfHeight], // KUNCINYA DI SINI: Array dimensi khusus
                         orientation: 'portrait' 
                     }
                 };
@@ -1000,6 +992,7 @@
                     mainElement.style.width = originalWidth;
                     mainElement.style.maxWidth = originalMaxWidth;
                     mainElement.style.margin = originalMargin;
+                    mainElement.style.position = originalPos;
 
                     document.documentElement.classList.remove('pdf-print-mode');
                     body.classList.remove('pdf-print-mode');
